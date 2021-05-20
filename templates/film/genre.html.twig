@@ -1,0 +1,64 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello FilmController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div>
+    <h1>Les films de {{genre.name}}</h1>
+    <div class="row">
+        {% for movie in genre.movies %}
+        <div class="col-4 mb-3" style="height: 100%">
+            <div class="card" style="width: 18rem;">
+                {# <img class="card-img-top" src=".../100px180/" alt="Card image cap"> #}
+                <div class="card-body">
+                    <h5 class="card-title">{{ movie.name }} ({{ movie.originalName }})</h5>
+                    <p class="card-text" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;">{{ movie.synopsis }}</p>
+                    <h5>Acteurs</h5>
+                    <ul>
+                        {% for actor in movie.actors %}
+                            <li><a href="{{path('actor', {id: actor.id})}}">{{actor.firstName}} {{actor.lastName}}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <h5>Genres</h5>
+                    <ul>
+                        {% for genreItem in movie.genres %}
+                            <li><a href="{{path('genre', {id: genreItem.id})}}">{{genreItem.name}}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <h5>Le studio</h5>
+                    <ul>
+                        <li><a href="{{path('studio', {id: movie.studio.id})}}">{{movie.studio.name}}</a></li>
+                    </ul>
+                </div>
+                {% set isSeen = app.user in movie.seen %}
+                {# {{dump(app.user.id in movie.seen)}} #}
+                <a href="{{ path('toggleSeen', { 'filmId': movie.id }) }}">
+                    <button>
+                        {% if isSeen %}
+                            Marquer comme non-vue
+                        {% else %}
+                            Marquer comme vue
+                        {% endif %}
+                    </button>
+                </a>
+                {% set isInList = app.user in movie.watchList %}
+                <a href="{{ path('toggleWatchList', {'filmId': movie.id }) }}">
+                    <button>
+                        {% if isInList %}
+                            Supprimer de ma liste
+                        {% else %}
+                            Ajouter a ma liste
+                        {% endif %}
+                    </button>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
